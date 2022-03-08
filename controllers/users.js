@@ -1,39 +1,63 @@
 const { response, request } = require('express');
+const bcryptjs = require('bcryptjs');
 
-const usersGet = (req = request, res = response) => {
-    const { q, nombre = 'No name', apikey} = req.query;
+const Usuario = require('../models/usuario');
 
-    res.json({
-        msg: 'get API - Controlador',
-        q,
-        nombre,
-        apikey
-    })
+const usersGet = async (req = request, res = response) => {
+    const { limit = 5, from = 0 } = req.query;
+    const query = { estado: true };
+
+    const [ total, items ] = await Promise.all([
+        Usuario.countDocuments(query),
+        Usuario.find(query)
+            .limit( Number(limit) )
+            .skip( Number(from) )
+    ])
+
+    res.json(
+        { total, items }
+    )
 }
 
-const usersPost = (req, res) => {
+const usersPost = async (req, res = response) => {
+    const { nombre, correo, password, rol } = req.body;
+    const usuario = new Usuario({ nombre, correo, password, rol });
 
-    const body = req.body;
+    // Encriptar la contraseña
+    const salt = bcryptjs.genSaltSync();
+    usuario.password = bcryptjs.hashSync( password, salt );
 
-    res.json({
-        msg: 'post API - Controlador',
-        body
-    })
+    // Guardar en BD
+
+    await usuario.save();
+
+    res.json( usuario )
 }
 
-const usersPut = (req, res) => {
+const usersPut = async (req = request, res) => {
     const id = req.params.id;
+    const { _id, password, google, correo, ...resto } = req.body;
 
-    res.json({
-        msg: 'put API - Controlador',
-        id
-    })
+    if( password ) {
+        const salt = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync( password, salt );
+    }
+
+    const usuario = await Usuario.findByIdAndUpdate(id, resto, { new: true });
+
+    res.json( usuario )
 }
 
-const usersDelete = (req, res) => {
+const usersDelete = async (req, res) => {
+    const { id } = req.params;
+
+    const usuario = await Usuario.findByIdAndUpdate( id, { estado: false }, { new: true } );
+    const usuarioAutenticado = req.usuario;
+
     res.json({
-        msg: 'delete API - Controlador'
-    })
+        usuario,
+        usuarioAutenticado
+    });
 }
 
 module.exports = {

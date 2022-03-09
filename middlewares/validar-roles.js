@@ -2,7 +2,7 @@ const { response } = require("express");
 
 const esAdminRole = (req, res = response, next) => {
 
-    if( !req.status ) {
+    if( !req.usuario ) {
         return res.status(500).json({
             msg: 'Se quiere verificar el rol sin validar el token primero'
         });
@@ -21,7 +21,7 @@ const esAdminRole = (req, res = response, next) => {
 
 const tieneRole = ( ...roles ) => {
     return (req, res = response, next) => {
-        if( !req.status ) {
+        if( !req.usuario ) {
             return res.status(500).json({
                 msg: 'Se quiere verificar el rol sin validar el token primero'
             });

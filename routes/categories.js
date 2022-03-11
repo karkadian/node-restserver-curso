@@ -29,6 +29,7 @@ router.put('/:id', [
     tieneRole('ADMIN_ROLE', 'VENTAS_ROLE'),
     check('id', 'No es ID válido').isMongoId(),
     check('id').custom( existeCategoria ),
+    check('nombre', 'El nombre es obligatorio').notEmpty(),
     check('nombre').custom( existeNombreCategoria ),
     validarCampos
 ], actualizarCategoria)

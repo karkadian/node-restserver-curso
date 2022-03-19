@@ -3,9 +3,9 @@ const bcryptjs = require('bcryptjs');
 
 const { Usuario } = require('../models');
 
-const { generarJWT } = require("../helpers/generarJWT");
+const { generarJWT } = require("../helpers");
 const req = require("express/lib/request");
-const { googleVerify } = require("../helpers/google-verify");
+const { googleVerify } = require("../helpers");
 
 const login = async (req, res = response) => {
 

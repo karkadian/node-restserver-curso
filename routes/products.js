@@ -2,7 +2,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 
 const { crearProducto, obtenerProductos, obtenerProducto, actualizarProducto, borrarProducto } = require('../controllers/products');
-const { existeProducto, existeNombreProducto, existeCategoria } = require('../helpers/db-validators');
+const { existeProducto, existeNombreProducto, existeCategoria } = require('../helpers');
 
 const { validarCampos, validarJWT, tieneRole } = require('../middlewares');
 
